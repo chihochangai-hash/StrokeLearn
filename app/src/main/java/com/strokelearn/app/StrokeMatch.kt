@@ -6,8 +6,8 @@ import kotlin.math.hypot
 
 internal data class GlyphBox(val left: Float, val top: Float, val size: Float)
 
-internal fun glyphBox(canvas: Size): GlyphBox {
-    val size = minOf(canvas.width, canvas.height) * 0.96f
+internal fun glyphBox(canvas: Size, scale: Float = 1f): GlyphBox {
+    val size = minOf(canvas.width, canvas.height) * 0.96f * scale
     return GlyphBox(
         left = (canvas.width - size) / 2f,
         top = (canvas.height - size) / 2f,
@@ -15,13 +15,16 @@ internal fun glyphBox(canvas: Size): GlyphBox {
     )
 }
 
-internal fun digitBoxes(canvas: Size, count: Int): List<GlyphBox> {
+internal fun digitBoxes(canvas: Size, count: Int, scale: Float = 1f): List<GlyphBox> {
     val cells = count.coerceAtLeast(1)
     val cellWidth = canvas.width / cells
-    val size = minOf(cellWidth * 0.92f, canvas.height * 0.96f)
+    val size = minOf(cellWidth * 0.92f, canvas.height * 0.96f) * scale
+    val gap = size * 0.06f
+    val total = cells * size + (cells - 1) * gap
+    val start = (canvas.width - total) / 2f
     return List(cells) { index ->
         GlyphBox(
-            left = index * cellWidth + (cellWidth - size) / 2f,
+            left = start + index * (size + gap),
             top = (canvas.height - size) / 2f,
             size = size,
         )
